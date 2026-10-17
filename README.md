@@ -1,5 +1,9 @@
 # Skew Heap em C
 
+**UTFPR - Câmpus Medianeira | Ciência da Computação | Árvores e Grafos | 2026.2**
+
+**Equipe:** Erik Mazzuco, Letícia Moro, Leonardo Herrero
+
 Biblioteca em C de uma **Skew Heap** (Min-Heap), com um programa de exemplo e testes automatizados.
 Trabalho do Seminário 2 – Heaps da disciplina **Árvores e Grafos** (UTFPR – Câmpus Medianeira, 2026.2).
 
