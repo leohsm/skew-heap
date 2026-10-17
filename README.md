@@ -22,23 +22,95 @@ Makefile              compilação com make
 compilar.bat          compilação no Windows sem make
 ```
 
-## Compilação
+## Como rodar
 
-Requer um compilador C99 (gcc/MinGW).
+Primeiro baixe o projeto:
 
 ```sh
-make            # gera libskewheap.a e o programa exemplo
-make executar   # roda a demonstração
-make teste      # compila e roda os testes
+git clone https://github.com/leohsm/skew-heap.git
+cd skew-heap
 ```
 
-No Windows sem `make`, rode `compilar.bat`. Também é possível compilar direto:
+Depois escolha uma das opções abaixo: compilar direto em C (opção 1) ou usar o Docker sem instalar
+compilador (opção 2).
+
+### Opção 1: compilando em C (gcc)
+
+#### Windows
+
+1. Instale o gcc (só na primeira vez) pelo PowerShell:
+
+   ```powershell
+   winget install BrechtSanders.WinLibs.POSIX.UCRT
+   ```
+
+   Feche e abra o terminal de novo e confira com `gcc --version`.
+
+2. Compile e rode na pasta do projeto:
+
+   ```powershell
+   .\compilar.bat         # gera libskewheap.a, exemplo.exe e teste_skew.exe
+   .\exemplo.exe          # demonstração guiada
+   .\exemplo.exe -i       # menu interativo
+   .\teste_skew.exe       # testes automatizados
+   ```
+
+#### Linux / macOS
+
+Instale o gcc e o make, se ainda não tiver (`sudo apt install build-essential` no Ubuntu/Debian,
+`xcode-select --install` no macOS), e rode:
+
+```sh
+make             # gera libskewheap.a e o programa exemplo
+./exemplo        # demonstração guiada
+./exemplo -i     # menu interativo
+make teste       # compila e roda os testes
+make clean       # apaga os arquivos gerados
+```
+
+#### Sem make nem .bat (qualquer sistema)
 
 ```sh
 gcc -std=c99 -Wall -Iinclude -c src/skew_heap.c -o skew_heap.o
 ar rcs libskewheap.a skew_heap.o
 gcc -std=c99 -Wall -Iinclude examples/exemplo.c -L. -lskewheap -o exemplo
+gcc -std=c99 -Wall -Iinclude tests/teste.c -L. -lskewheap -o teste_skew
 ```
+
+### Opção 2: usando Docker
+
+Não precisa instalar compilador, só o [Docker](https://www.docker.com/products/docker-desktop/).
+No Windows, **abra o Docker Desktop antes** de rodar os comandos. A compilação acontece dentro do
+container, a partir de uma cópia do projeto, então nenhum arquivo é criado na sua pasta.
+
+**Windows (PowerShell):**
+
+```powershell
+# demonstração guiada
+docker run --rm -v "${PWD}:/src:ro" gcc:14 sh -c "cp -r /src /w && cd /w && make && ./exemplo"
+
+# menu interativo (o -it permite digitar no programa)
+docker run --rm -it -v "${PWD}:/src:ro" gcc:14 sh -c "cp -r /src /w && cd /w && make && ./exemplo -i"
+
+# testes
+docker run --rm -v "${PWD}:/src:ro" gcc:14 sh -c "cp -r /src /w && cd /w && make teste"
+```
+
+**Linux / macOS / Git Bash:**
+
+```sh
+# demonstração guiada
+docker run --rm -v "$(pwd):/src:ro" gcc:14 sh -c "cp -r /src /w && cd /w && make && ./exemplo"
+
+# menu interativo
+docker run --rm -it -v "$(pwd):/src:ro" gcc:14 sh -c "cp -r /src /w && cd /w && make && ./exemplo -i"
+
+# testes
+docker run --rm -v "$(pwd):/src:ro" gcc:14 sh -c "cp -r /src /w && cd /w && make teste"
+```
+
+No Git Bash do Windows, coloque `MSYS_NO_PATHCONV=1` antes de `docker` para o caminho não ser convertido.
+Na primeira execução o Docker baixa a imagem `gcc:14` (mais de 1 GB), o que pode demorar alguns minutos.
 
 ## Programa de exemplo
 
